@@ -1,140 +1,126 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { useState, useEffect } from "react"
+import axios from "axios"
 
-import Pokemon from './Pokemon'
+import Pokemon from "./Pokemon"
 
 const Pokedex = () => {
   const [poke, setPoke] = useState([])
-  const [loading, setLoading ] = useState(false)
+  const [loading, setLoading] = useState(false)
   const [filter, setFilter] = useState({
     //final pokemon in gen
     count: null,
     //first pokemon in gen
-    offset: null
+    offset: null,
   })
 
-
   const onGenChange = (e) => {
-
     let gen = e.target.value
 
-    switch(gen) {
-      case gen = "Kanto":
+    switch (gen) {
+      case (gen = "Kanto"):
         console.log("Kanto")
         setFilter({
           count: 151,
-          offset: 1
+          offset: 1,
         })
-        break;
+        break
 
-      case gen = "Johto":
-        console.log('Johto')
+      case (gen = "Johto"):
+        console.log("Johto")
         setFilter({
           count: 251,
-          offset: 152
+          offset: 152,
         })
-        break;
+        break
 
-      case gen = "Hoenn":
-        console.log('Hoenn')
+      case (gen = "Hoenn"):
+        console.log("Hoenn")
         setFilter({
           count: 386,
-          offset: 252
+          offset: 252,
         })
-        break;
+        break
 
-      case gen = "Sinnoh":
-        console.log('Sinnoh')
+      case (gen = "Sinnoh"):
+        console.log("Sinnoh")
         setFilter({
           //final pokemon in gen
           count: 484,
           //first pokemon in gen
-          offset: 387
+          offset: 387,
         })
-        break;
+        break
 
-      case gen = "Unova":
-        console.log('Unova')
+      case (gen = "Unova"):
+        console.log("Unova")
         setFilter({
           //final pokemon in gen
           count: 649,
           //first pokemon in gen
-          offset: 485
+          offset: 485,
         })
-        break;
+        break
 
-      case gen = "Kalos":
-        console.log('Kalos')
+      case (gen = "Kalos"):
+        console.log("Kalos")
         setFilter({
           //final pokemon in gen
           count: 721,
           //first pokemon in gen
-          offset: 650
+          offset: 650,
         })
-        break;
+        break
 
-      case gen = "Alola":
-        console.log('Alola')
+      case (gen = "Alola"):
+        console.log("Alola")
         setFilter({
           //final pokemon in gen
           count: 809,
           //first pokemon in gen
-          offset: 722
+          offset: 722,
         })
-        break;
+        break
 
-      case gen = "Galar":
-        console.log('Galar')
+      case (gen = "Galar"):
+        console.log("Galar")
         setFilter({
           //final pokemon in gen
           count: 898,
           //first pokemon in gen
-          offset: 810
+          offset: 810,
         })
-        break;
+        break
 
       default:
         return null
     }
-
-
   }
 
-
-
   const fetchPokemon = async () => {
-    
     setLoading(true)
 
-    for( let i = filter.offset; i <= filter.count; i++){
+    for (let i = filter.offset; i <= filter.count; i++) {
+      await axios.get(`https://pokeapi.co/api/v2/pokemon/${i}`).then((res) => {
+        const newPokemon = res.data
+        // console.log(newPokemon)
+        setPoke((poke) => [...poke, newPokemon])
+      })
 
-      await axios.get(`https://pokeapi.co/api/v2/pokemon/${i}`)
-        .then( res => {
-          const newPokemon = res.data
-          // console.log(newPokemon)
-          setPoke(poke => [...poke, newPokemon])
-        } )
-
-      if( i === filter.count){
+      if (i === filter.count) {
         setLoading(false)
       }
-    }    
+    }
   }
 
   useEffect(() => {
+    if (filter.count || filter.offset) {
+      setPoke([])
 
-
-    if(filter.count || filter.offset){
-    
-    setPoke([])
-
-    fetchPokemon()
-    
-  }
-
+      fetchPokemon()
+    }
   }, [filter.offset])
 
- //151,1
+  //151,1
   //251, 152
   //386, 252
   //484, 387
@@ -143,14 +129,18 @@ const Pokedex = () => {
   //809, 722
   //898 ,810
 
-
-  
   return (
     <React.Fragment>
       <div className="generation-container">
         <form className="gen-select  select-dropdown">
-          <select className="gen-dropdown" defaultValue="select" onChange={ onGenChange }>
-            <option disabled value="select">Select a Generation to begin</option>
+          <select
+            className="gen-dropdown"
+            defaultValue="select"
+            onChange={onGenChange}
+          >
+            <option disabled value="select">
+              Select a Generation to begin
+            </option>
             <option value="Kanto">Kanto</option>
             <option value="Johto">Johto</option>
             <option value="Hoenn">Hoenn</option>
@@ -161,13 +151,14 @@ const Pokedex = () => {
             <option value="Galar">Galar</option>
           </select>
         </form>
-        { loading && <div class="spinner"></div>}
+        {loading && <div className="spinner"></div>}
       </div>
       <div className="pokedex">
-      {poke.map(pokemon => <Pokemon pokemon={pokemon} key={pokemon.id} />)}
+        {poke.map((pokemon) => (
+          <Pokemon pokemon={pokemon} key={pokemon.id} />
+        ))}
       </div>
     </React.Fragment>
-
   )
 }
 
